@@ -3,13 +3,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const config = window.SERGIO_DASHBOARD_CONFIG;
 
-    if (!config) {
-        showFatalError(
-            "The dashboard configuration could not be loaded. Check config.js."
-        );
-        return;
-    }
-
     const state = {
         currentCalendarDate: new Date(),
         selectedCalendarDate: null,
@@ -21,15 +14,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
         calendarSection: document.getElementById("calendar-section"),
         calendarDays: document.getElementById("calendar-days"),
-        calendarMonthLabel: document.getElementById("calendar-month-label"),
+        calendarMonthLabel: document.getElementById(
+            "calendar-month-label"
+        ),
         calendarEventDetails: document.getElementById(
             "calendar-event-details"
         ),
-
         previousMonthButton: document.getElementById(
             "previous-month-button"
         ),
-        nextMonthButton: document.getElementById("next-month-button"),
+        nextMonthButton: document.getElementById(
+            "next-month-button"
+        ),
         openCalendarButton: document.getElementById(
             "open-calendar-button"
         ),
@@ -63,7 +59,17 @@ document.addEventListener("DOMContentLoaded", () => {
         )
     };
 
-    initialiseDashboard();
+    try {
+        initialiseDashboard();
+    } catch (error) {
+        console.error(error);
+
+        showFatalError(
+            error instanceof Error
+                ? error.message
+                : "An unexpected error prevented the dashboard from starting."
+        );
+    }
 
     function initialiseDashboard() {
         validateConfiguration();
@@ -75,6 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function validateConfiguration() {
+        if (!config) {
+            throw new Error(
+                "The dashboard configuration could not be loaded. Check config.js."
+            );
+        }
+
         const requiredGitHubFields = [
             "username",
             "repository",
@@ -101,6 +113,10 @@ document.addEventListener("DOMContentLoaded", () => {
             config.calendarEvents = [];
         }
     }
+
+    /* =========================================================
+       CALENDAR
+    ========================================================= */
 
     function initialiseCalendarControls() {
         elements.previousMonthButton?.addEventListener(
@@ -174,10 +190,16 @@ document.addEventListener("DOMContentLoaded", () => {
         const leadingEmptyDays = firstDayOfMonth.getDay();
         const numberOfDays = finalDayOfMonth.getDate();
 
-        for (let index = 0; index < leadingEmptyDays; index += 1) {
+        for (
+            let index = 0;
+            index < leadingEmptyDays;
+            index += 1
+        ) {
             const emptyCell = document.createElement("span");
+
             emptyCell.className = "calendar-day is-empty";
             emptyCell.setAttribute("aria-hidden", "true");
+
             elements.calendarDays.appendChild(emptyCell);
         }
 
@@ -187,7 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
             const matchingEvents = getCalendarEvents(dateKey);
 
             const dayElement = document.createElement(
-                matchingEvents.length > 0 ? "button" : "span"
+                matchingEvents.length > 0
+                    ? "button"
+                    : "span"
             );
 
             dayElement.className = "calendar-day";
@@ -203,6 +227,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     .join(", ");
 
                 dayElement.title = eventNames;
+
                 dayElement.setAttribute(
                     "aria-label",
                     `${formatReadableDate(date)}: ${eventNames}`
@@ -210,11 +235,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 dayElement.addEventListener("click", () => {
                     state.selectedCalendarDate = dateKey;
+
                     renderCalendar();
                     displayCalendarEvents(dateKey);
                 });
             } else {
-                dayElement.setAttribute("aria-label", formatReadableDate(date));
+                dayElement.setAttribute(
+                    "aria-label",
+                    formatReadableDate(date)
+                );
             }
 
             if (isToday(date)) {
@@ -240,6 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (events.length === 0) {
             elements.calendarEventDetails.textContent =
                 "No dashboard events are scheduled for this date.";
+
             return;
         }
 
@@ -247,14 +277,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const eventMarkup = events
             .map((event) => {
-                const branchName = getBranchTitle(event.branch);
+                const branchName = getBranchTitle(
+                    event.branch
+                );
 
                 return `
                     <article class="calendar-event-entry">
-                        <strong>${escapeHtml(event.title)}</strong>
+                        <strong>
+                            ${escapeHtml(event.title)}
+                        </strong>
+
                         ${
                             branchName
-                                ? `<span>${escapeHtml(branchName)}</span>`
+                                ? `
+                                    <span>
+                                        ${escapeHtml(branchName)}
+                                    </span>
+                                `
                                 : ""
                         }
                     </article>
@@ -264,7 +303,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         elements.calendarEventDetails.innerHTML = `
             <div>
-                <strong>${escapeHtml(formatReadableDate(date))}</strong>
+                <strong>
+                    ${escapeHtml(formatReadableDate(date))}
+                </strong>
+
                 ${eventMarkup}
             </div>
         `;
@@ -284,6 +326,10 @@ document.addEventListener("DOMContentLoaded", () => {
         return branch?.title || "";
     }
 
+    /* =========================================================
+       TIMELINE
+    ========================================================= */
+
     function renderTimeline() {
         if (!elements.timelineContainer) {
             return;
@@ -294,20 +340,28 @@ document.addEventListener("DOMContentLoaded", () => {
         if (config.branches.length === 0) {
             elements.timelineContainer.innerHTML = `
                 <div class="empty-state">
-                    <p>No timeline branches have been configured.</p>
+                    <p>
+                        No timeline branches have been configured.
+                    </p>
                 </div>
             `;
+
             return;
         }
 
         config.branches.forEach((branch) => {
-            const branchElement = createTimelineBranch(branch);
-            elements.timelineContainer.appendChild(branchElement);
+            const branchElement =
+                createTimelineBranch(branch);
+
+            elements.timelineContainer.appendChild(
+                branchElement
+            );
         });
     }
 
     function createTimelineBranch(branch) {
         const section = document.createElement("section");
+
         section.className = "timeline-branch";
         section.dataset.branchId = branch.id;
 
@@ -315,16 +369,23 @@ document.addEventListener("DOMContentLoaded", () => {
             ? branch.items
             : [];
 
+        const teamsMarkup = createTeamsMarkup(
+            branch.teams
+        );
+
         section.innerHTML = `
             <div class="timeline-branch-marker">
                 <img
                     src="${escapeAttribute(branch.image)}"
                     alt="${escapeAttribute(branch.title)} logo"
+                    loading="lazy"
                 >
             </div>
 
             <header class="timeline-branch-header">
-                <h3>${escapeHtml(branch.title)}</h3>
+                <h3>
+                    ${escapeHtml(branch.title)}
+                </h3>
 
                 <span class="timeline-branch-subtitle">
                     ${escapeHtml(branch.subtitle || "")}
@@ -335,15 +396,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 </p>
             </header>
 
+            ${teamsMarkup}
+
             <div class="timeline-items"></div>
         `;
 
-        const itemsContainer = section.querySelector(".timeline-items");
+        const itemsContainer = section.querySelector(
+            ".timeline-items"
+        );
 
         if (items.length === 0) {
             itemsContainer.innerHTML = `
                 <div class="empty-state">
-                    <p>No deliverables have been added to this branch.</p>
+                    <p>
+                        No deliverables have been added
+                        to this branch.
+                    </p>
                 </div>
             `;
         } else {
@@ -357,8 +425,106 @@ document.addEventListener("DOMContentLoaded", () => {
         return section;
     }
 
+    function createTeamsMarkup(teams) {
+        if (
+            !Array.isArray(teams) ||
+            teams.length === 0
+        ) {
+            return "";
+        }
+
+        const teamCards = teams
+            .map((team) => {
+                const members = Array.isArray(team.members)
+                    ? team.members.filter(Boolean)
+                    : [];
+
+                const memberCountMarkup =
+                    members.length > 0
+                        ? `
+                            <span class="team-count">
+                                ${members.length}
+                                member${
+                                    members.length === 1
+                                        ? ""
+                                        : "s"
+                                }
+                            </span>
+                        `
+                        : "";
+
+                const noteMarkup = team.note
+                    ? `
+                        <p class="team-note">
+                            ${escapeHtml(team.note)}
+                        </p>
+                    `
+                    : "";
+
+                const membersMarkup =
+                    members.length > 0
+                        ? `
+                            <div class="team-members">
+                                ${members
+                                    .map((member) => {
+                                        return `
+                                            <span class="team-member">
+                                                ${escapeHtml(member)}
+                                            </span>
+                                        `;
+                                    })
+                                    .join("")}
+                            </div>
+                        `
+                        : "";
+
+                return `
+                    <article class="team-card">
+                        <div class="team-card-top">
+                            <h4>
+                                ${escapeHtml(
+                                    team.title || "Team"
+                                )}
+                            </h4>
+
+                            ${memberCountMarkup}
+                        </div>
+
+                        ${noteMarkup}
+                        ${membersMarkup}
+                    </article>
+                `;
+            })
+            .join("");
+
+        return `
+            <section
+                class="timeline-teams"
+                aria-label="Indaba planning teams"
+            >
+                <div class="timeline-teams-header">
+                    <div>
+                        <h4>
+                            Indaba planning teams
+                        </h4>
+
+                        <p>
+                            Key teams involved in planning
+                            and delivering the Energy Indaba.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="team-grid">
+                    ${teamCards}
+                </div>
+            </section>
+        `;
+    }
+
     function createTimelineCard(item) {
         const article = document.createElement("article");
+
         article.className = "timeline-card";
         article.dataset.folder = item.folder;
 
@@ -379,7 +545,9 @@ document.addEventListener("DOMContentLoaded", () => {
                             ${escapeHtml(item.title)}
                         </span>
 
-                        <span class="status-badge ${statusClass}">
+                        <span
+                            class="status-badge ${statusClass}"
+                        >
                             ${escapeHtml(statusLabel)}
                         </span>
                     </span>
@@ -417,42 +585,87 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         toggle.addEventListener("click", async () => {
-            const isOpen = article.classList.contains("is-open");
+            const isOpen =
+                article.classList.contains("is-open");
 
             if (isOpen) {
-                closeTimelineCard(article, toggle, content);
+                closeTimelineCard(
+                    article,
+                    toggle,
+                    content
+                );
+
                 return;
             }
 
-            openTimelineCard(article, toggle, content);
+            openTimelineCard(
+                article,
+                toggle,
+                content
+            );
 
             if (!content.dataset.loaded) {
-                await loadFolderDocuments(item.folder, content);
+                await loadFolderDocuments(
+                    item.folder,
+                    content
+                );
             }
         });
 
         return article;
     }
 
-    function openTimelineCard(article, toggle, content) {
+    function openTimelineCard(
+        article,
+        toggle,
+        content
+    ) {
         article.classList.add("is-open");
         toggle.setAttribute("aria-expanded", "true");
         content.hidden = false;
     }
 
-    function closeTimelineCard(article, toggle, content) {
+    function closeTimelineCard(
+        article,
+        toggle,
+        content
+    ) {
         article.classList.remove("is-open");
         toggle.setAttribute("aria-expanded", "false");
         content.hidden = true;
     }
 
-    async function loadFolderDocuments(folderPath, container) {
+    /* =========================================================
+       GITHUB DOCUMENTS
+    ========================================================= */
+
+    async function loadFolderDocuments(
+        folderPath,
+        container
+    ) {
+        if (!folderPath) {
+            container.innerHTML = `
+                <div class="error-state">
+                    <strong>
+                        No folder has been configured.
+                    </strong>
+
+                    <p>
+                        Add a valid folder path in config.js.
+                    </p>
+                </div>
+            `;
+
+            return;
+        }
+
         container.innerHTML = `
             <div class="loading-state">
                 <span
                     class="loading-spinner"
                     aria-hidden="true"
                 ></span>
+
                 <p>Loading documents…</p>
             </div>
         `;
@@ -463,8 +676,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (state.loadedFolders.has(folderPath)) {
                 files = state.loadedFolders.get(folderPath);
             } else {
-                files = await fetchGitHubFolder(folderPath);
-                state.loadedFolders.set(folderPath, files);
+                files = await fetchGitHubFolder(
+                    folderPath
+                );
+
+                state.loadedFolders.set(
+                    folderPath,
+                    files
+                );
             }
 
             renderDocumentList(files, container);
@@ -474,8 +693,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             container.innerHTML = `
                 <div class="error-state">
-                    <strong>Documents could not be loaded.</strong>
-                    <p>${escapeHtml(error.message)}</p>
+                    <strong>
+                        Documents could not be loaded.
+                    </strong>
+
+                    <p>
+                        ${escapeHtml(error.message)}
+                    </p>
 
                     <button
                         class="button button-secondary retry-folder-button"
@@ -486,14 +710,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
 
-            const retryButton = container.querySelector(
-                ".retry-folder-button"
-            );
+            const retryButton =
+                container.querySelector(
+                    ".retry-folder-button"
+                );
 
-            retryButton?.addEventListener("click", async () => {
-                state.loadedFolders.delete(folderPath);
-                await loadFolderDocuments(folderPath, container);
-            });
+            retryButton?.addEventListener(
+                "click",
+                async () => {
+                    state.loadedFolders.delete(
+                        folderPath
+                    );
+
+                    delete container.dataset.loaded;
+
+                    await loadFolderDocuments(
+                        folderPath,
+                        container
+                    );
+                }
+            );
         }
     }
 
@@ -506,7 +742,9 @@ document.addEventListener("DOMContentLoaded", () => {
             config.github.repository
         );
 
-        const branch = encodeURIComponent(config.github.branch);
+        const branch = encodeURIComponent(
+            config.github.branch
+        );
 
         const encodedPath = folderPath
             .split("/")
@@ -532,7 +770,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (response.status === 404) {
                 throw new Error(
-                    `The folder "${folderPath}" was not found. Check its spelling in config.js.`
+                    `The folder "${folderPath}" was not found. Check the spelling in config.js.`
                 );
             }
 
@@ -545,7 +783,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!Array.isArray(data)) {
             throw new Error(
-                "The configured path is not a repository folder."
+                "The configured repository path is not a folder."
             );
         }
 
@@ -572,21 +810,28 @@ document.addEventListener("DOMContentLoaded", () => {
         if (files.length === 0) {
             container.innerHTML = `
                 <div class="empty-state">
-                    <strong>No documents uploaded yet.</strong>
+                    <strong>
+                        No documents uploaded yet.
+                    </strong>
+
                     <p>
-                        Add files to this folder in the GitHub repository
+                        Add files to this folder in GitHub
                         and reload the dashboard.
                     </p>
                 </div>
             `;
+
             return;
         }
 
         const list = document.createElement("div");
+
         list.className = "document-list";
 
         files.forEach((file) => {
-            list.appendChild(createDocumentItem(file));
+            list.appendChild(
+                createDocumentItem(file)
+            );
         });
 
         container.innerHTML = "";
@@ -594,15 +839,22 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function createDocumentItem(file) {
-        const fileExtension = getFileExtension(file.name);
-        const previewSupported = canPreviewFile(fileExtension);
+        const extension = getFileExtension(file.name);
+        const previewSupported =
+            canPreviewFile(extension);
 
         const item = document.createElement("article");
+
         item.className = "document-item";
 
         item.innerHTML = `
-            <span class="document-icon" aria-hidden="true">
-                ${escapeHtml(getFileIconLabel(fileExtension))}
+            <span
+                class="document-icon"
+                aria-hidden="true"
+            >
+                ${escapeHtml(
+                    getFileIconLabel(extension)
+                )}
             </span>
 
             <div class="document-info">
@@ -610,13 +862,19 @@ document.addEventListener("DOMContentLoaded", () => {
                     class="document-name"
                     title="${escapeAttribute(file.name)}"
                 >
-                    ${escapeHtml(formatFileName(file.name))}
+                    ${escapeHtml(
+                        formatFileName(file.name)
+                    )}
                 </span>
 
                 <span class="document-meta">
-                    ${escapeHtml(fileExtension.toUpperCase() || "FILE")}
+                    ${escapeHtml(
+                        extension.toUpperCase() || "FILE"
+                    )}
                     ·
-                    ${escapeHtml(formatFileSize(file.size))}
+                    ${escapeHtml(
+                        formatFileSize(file.size)
+                    )}
                 </span>
             </div>
 
@@ -637,7 +895,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <a
                     class="document-action"
                     href="${escapeAttribute(
-                        file.download_url || file.html_url
+                        file.download_url ||
+                        file.html_url
                     )}"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -651,59 +910,73 @@ document.addEventListener("DOMContentLoaded", () => {
             ".preview-document-button"
         );
 
-        previewButton?.addEventListener("click", () => {
-            openDocumentPreview(file);
-        });
+        previewButton?.addEventListener(
+            "click",
+            () => {
+                openDocumentPreview(file);
+            }
+        );
 
         return item;
     }
 
+    /* =========================================================
+       DOCUMENT PREVIEW
+    ========================================================= */
+
     function openDocumentPreview(file) {
+        if (
+            !elements.documentModal ||
+            !elements.documentPreview ||
+            !elements.documentModalActions
+        ) {
+            return;
+        }
+
         const extension = getFileExtension(file.name);
         const rawUrl = file.download_url;
         const githubUrl = file.html_url;
+        const displayName = formatFileName(file.name);
 
         elements.documentModalTitle.textContent =
-            formatFileName(file.name);
+            displayName;
 
         elements.documentPreview.innerHTML = "";
         elements.documentModalActions.innerHTML = "";
 
-        if (isImageExtension(extension)) {
+        if (!rawUrl) {
+            showUnsupportedPreview(
+                "A public file URL is not available for this document."
+            );
+        } else if (isImageExtension(extension)) {
             const image = document.createElement("img");
+
             image.src = rawUrl;
-            image.alt = `Preview of ${formatFileName(file.name)}`;
+            image.alt = `Preview of ${displayName}`;
+            image.loading = "eager";
+
+            image.addEventListener("error", () => {
+                showUnsupportedPreview(
+                    "The image preview could not be loaded."
+                );
+            });
+
             elements.documentPreview.appendChild(image);
         } else if (extension === "pdf") {
-            const iframe = document.createElement("iframe");
-            iframe.src = rawUrl;
-            iframe.title = `Preview of ${formatFileName(file.name)}`;
-            elements.documentPreview.appendChild(iframe);
-        } else if (
-            extension === "doc" ||
-            extension === "docx" ||
-            extension === "xls" ||
-            extension === "xlsx" ||
-            extension === "ppt" ||
-            extension === "pptx"
-        ) {
-            const iframe = document.createElement("iframe");
-
-            iframe.src =
-                "https://view.officeapps.live.com/op/embed.aspx?src=" +
-                encodeURIComponent(rawUrl);
-
-            iframe.title = `Preview of ${formatFileName(file.name)}`;
-            elements.documentPreview.appendChild(iframe);
+            createPdfPreview(rawUrl, displayName);
+        } else if (isOfficeExtension(extension)) {
+            createOfficePreview(
+                rawUrl,
+                displayName
+            );
         } else {
-            elements.documentPreview.innerHTML = `
-                <div class="document-preview-message">
-                    <p>
-                        This file type cannot be previewed directly.
-                        Use the links below to open or download it.
-                    </p>
-                </div>
-            `;
+            showUnsupportedPreview(
+                "This file type cannot be previewed directly."
+            );
+        }
+
+        if (canPreviewFile(extension)) {
+            addFullscreenPreviewAction();
         }
 
         addDocumentModalAction(
@@ -712,11 +985,109 @@ document.addEventListener("DOMContentLoaded", () => {
         );
 
         addDocumentModalAction(
-            "Open raw file",
+            extension === "pdf"
+                ? "Open PDF in new tab"
+                : "Open raw file",
             rawUrl
         );
 
         showModal(elements.documentModal);
+    }
+
+    function createPdfPreview(rawUrl, displayName) {
+        const iframe = document.createElement("iframe");
+
+        iframe.src =
+            "https://docs.google.com/gview?embedded=1&url=" +
+            encodeURIComponent(rawUrl);
+
+        iframe.title = `Preview of ${displayName}`;
+        iframe.loading = "eager";
+        iframe.allowFullscreen = true;
+
+        elements.documentPreview.appendChild(iframe);
+    }
+
+    function createOfficePreview(
+        rawUrl,
+        displayName
+    ) {
+        const iframe = document.createElement("iframe");
+
+        iframe.src =
+            "https://view.officeapps.live.com/op/embed.aspx?src=" +
+            encodeURIComponent(rawUrl);
+
+        iframe.title = `Preview of ${displayName}`;
+        iframe.loading = "eager";
+        iframe.allowFullscreen = true;
+
+        elements.documentPreview.appendChild(iframe);
+    }
+
+    function showUnsupportedPreview(message) {
+        elements.documentPreview.innerHTML = `
+            <div class="document-preview-message">
+                <p>
+                    ${escapeHtml(message)}
+                </p>
+
+                <p>
+                    Use one of the buttons below to open
+                    the original document.
+                </p>
+            </div>
+        `;
+    }
+
+    function addFullscreenPreviewAction() {
+        const button = document.createElement("button");
+
+        button.className = "button button-primary";
+        button.type = "button";
+        button.textContent = "Full screen view";
+
+        button.addEventListener("click", async () => {
+            const target = elements.documentPreview;
+
+            if (!target) {
+                return;
+            }
+
+            try {
+                if (document.fullscreenElement) {
+                    await document.exitFullscreen();
+                    return;
+                }
+
+                if (target.requestFullscreen) {
+                    await target.requestFullscreen();
+                    return;
+                }
+
+                if (target.webkitRequestFullscreen) {
+                    target.webkitRequestFullscreen();
+                    return;
+                }
+
+                throw new Error(
+                    "Fullscreen mode is not supported by this browser."
+                );
+            } catch (error) {
+                console.error(
+                    "Fullscreen preview failed:",
+                    error
+                );
+
+                window.alert(
+                    "Full-screen preview could not be opened. Use the open-file button instead."
+                );
+            }
+        });
+
+        elements.documentModalActions.appendChild(
+            button
+        );
     }
 
     function addDocumentModalAction(label, url) {
@@ -725,6 +1096,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const link = document.createElement("a");
+
         link.className = "button button-secondary";
         link.href = url;
         link.target = "_blank";
@@ -733,6 +1105,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         elements.documentModalActions.appendChild(link);
     }
+
+    /* =========================================================
+       ADMIN PIN GATE
+    ========================================================= */
 
     function initialiseAdminGate() {
         const sessionKey =
@@ -750,7 +1126,8 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             () => {
                 if (
-                    sessionStorage.getItem(sessionKey) === "true"
+                    sessionStorage.getItem(sessionKey) ===
+                    "true"
                 ) {
                     unlockAdminSection(true);
                     return;
@@ -762,19 +1139,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 showModal(elements.adminModal);
 
                 window.setTimeout(() => {
-                    elements.adminPinInput.focus();
+                    elements.adminPinInput?.focus();
                 }, 50);
             }
         );
 
-        elements.adminPinInput?.addEventListener("input", () => {
-            elements.adminPinInput.value =
-                elements.adminPinInput.value
-                    .replace(/\D/g, "")
-                    .slice(0, 4);
+        elements.adminPinInput?.addEventListener(
+            "input",
+            () => {
+                elements.adminPinInput.value =
+                    elements.adminPinInput.value
+                        .replace(/\D/g, "")
+                        .slice(0, 4);
 
-            elements.adminPinMessage.textContent = "";
-        });
+                elements.adminPinMessage.textContent = "";
+            }
+        );
 
         elements.adminPinForm?.addEventListener(
             "submit",
@@ -784,23 +1164,31 @@ document.addEventListener("DOMContentLoaded", () => {
                 const submittedPin =
                     elements.adminPinInput.value.trim();
 
-                const configuredPin =
-                    String(config.admin?.pin || "");
+                const configuredPin = String(
+                    config.admin?.pin || ""
+                );
 
                 if (!/^\d{4}$/.test(submittedPin)) {
                     elements.adminPinMessage.textContent =
                         "Enter a valid four-digit PIN.";
+
                     return;
                 }
 
                 if (submittedPin !== configuredPin) {
                     elements.adminPinMessage.textContent =
                         "The PIN is incorrect.";
+
                     elements.adminPinInput.select();
+
                     return;
                 }
 
-                sessionStorage.setItem(sessionKey, "true");
+                sessionStorage.setItem(
+                    sessionKey,
+                    "true"
+                );
+
                 closeModal(elements.adminModal);
                 unlockAdminSection(true);
             }
@@ -810,13 +1198,19 @@ document.addEventListener("DOMContentLoaded", () => {
             "click",
             () => {
                 sessionStorage.removeItem(sessionKey);
+
                 elements.adminSection.hidden = true;
-                elements.openAdminButton.focus();
+
+                elements.openAdminButton?.focus();
             }
         );
     }
 
     function unlockAdminSection(scrollIntoView) {
+        if (!elements.adminSection) {
+            return;
+        }
+
         elements.adminSection.hidden = false;
 
         if (scrollIntoView) {
@@ -826,6 +1220,10 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
+
+    /* =========================================================
+       MODALS
+    ========================================================= */
 
     function initialiseModalControls() {
         document
@@ -842,17 +1240,33 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
             });
 
-        document.querySelectorAll("dialog.modal").forEach((modal) => {
-            modal.addEventListener("click", (event) => {
-                if (event.target === modal) {
-                    closeModal(modal);
-                }
-            });
+        document
+            .querySelectorAll("dialog.modal")
+            .forEach((modal) => {
+                modal.addEventListener(
+                    "click",
+                    (event) => {
+                        if (event.target === modal) {
+                            closeModal(modal);
+                        }
+                    }
+                );
 
-            modal.addEventListener("close", () => {
-                document.body.classList.remove("modal-open");
+                modal.addEventListener("close", () => {
+                    document.body.classList.remove(
+                        "modal-open"
+                    );
+                });
+
+                modal.addEventListener(
+                    "cancel",
+                    () => {
+                        document.body.classList.remove(
+                            "modal-open"
+                        );
+                    }
+                );
             });
-        });
     }
 
     function showModal(modal) {
@@ -860,7 +1274,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        if (typeof modal.showModal === "function") {
+        if (
+            typeof modal.showModal === "function" &&
+            !modal.open
+        ) {
             modal.showModal();
         } else {
             modal.setAttribute("open", "");
@@ -886,6 +1303,10 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.remove("modal-open");
     }
 
+    /* =========================================================
+       STATUS HELPERS
+    ========================================================= */
+
     function getStatusClass(status) {
         const classes = {
             upcoming: "status-upcoming",
@@ -905,6 +1326,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return labels[status] || "Upcoming";
     }
+
+    /* =========================================================
+       FILE HELPERS
+    ========================================================= */
 
     function getFileExtension(fileName) {
         const parts = String(fileName).split(".");
@@ -968,6 +1393,17 @@ document.addEventListener("DOMContentLoaded", () => {
         ].includes(extension);
     }
 
+    function isOfficeExtension(extension) {
+        return [
+            "doc",
+            "docx",
+            "xls",
+            "xlsx",
+            "ppt",
+            "pptx"
+        ].includes(extension);
+    }
+
     function formatFileName(fileName) {
         return String(fileName)
             .replace(/\.[^/.]+$/, "")
@@ -979,18 +1415,31 @@ document.addEventListener("DOMContentLoaded", () => {
     function formatFileSize(bytes) {
         const numberOfBytes = Number(bytes);
 
-        if (!Number.isFinite(numberOfBytes) || numberOfBytes <= 0) {
+        if (
+            !Number.isFinite(numberOfBytes) ||
+            numberOfBytes <= 0
+        ) {
             return "0 B";
         }
 
-        const units = ["B", "KB", "MB", "GB"];
+        const units = [
+            "B",
+            "KB",
+            "MB",
+            "GB"
+        ];
+
         const unitIndex = Math.min(
-            Math.floor(Math.log(numberOfBytes) / Math.log(1024)),
+            Math.floor(
+                Math.log(numberOfBytes) /
+                Math.log(1024)
+            ),
             units.length - 1
         );
 
         const value =
-            numberOfBytes / Math.pow(1024, unitIndex);
+            numberOfBytes /
+            Math.pow(1024, unitIndex);
 
         const roundedValue =
             value >= 10 || unitIndex === 0
@@ -1000,10 +1449,20 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${roundedValue} ${units[unitIndex]}`;
     }
 
+    /* =========================================================
+       DATE HELPERS
+    ========================================================= */
+
     function formatDateKey(date) {
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
+
+        const month = String(
+            date.getMonth() + 1
+        ).padStart(2, "0");
+
+        const day = String(
+            date.getDate()
+        ).padStart(2, "0");
 
         return `${year}-${month}-${day}`;
     }
@@ -1013,27 +1472,41 @@ document.addEventListener("DOMContentLoaded", () => {
             .split("-")
             .map(Number);
 
-        return new Date(year, month - 1, day);
+        return new Date(
+            year,
+            month - 1,
+            day
+        );
     }
 
     function formatReadableDate(date) {
-        return new Intl.DateTimeFormat("en-ZA", {
-            weekday: "long",
-            day: "numeric",
-            month: "long",
-            year: "numeric"
-        }).format(date);
+        return new Intl.DateTimeFormat(
+            "en-ZA",
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        ).format(date);
     }
 
     function isToday(date) {
         const today = new Date();
 
         return (
-            date.getFullYear() === today.getFullYear() &&
-            date.getMonth() === today.getMonth() &&
-            date.getDate() === today.getDate()
+            date.getFullYear() ===
+                today.getFullYear() &&
+            date.getMonth() ===
+                today.getMonth() &&
+            date.getDate() ===
+                today.getDate()
         );
     }
+
+    /* =========================================================
+       SECURITY AND ERROR HELPERS
+    ========================================================= */
 
     function escapeHtml(value) {
         return String(value ?? "")
@@ -1058,8 +1531,13 @@ document.addEventListener("DOMContentLoaded", () => {
         main.innerHTML = `
             <section class="timeline-section">
                 <div class="error-state">
-                    <strong>The dashboard could not start.</strong>
-                    <p>${escapeHtml(message)}</p>
+                    <strong>
+                        The dashboard could not start.
+                    </strong>
+
+                    <p>
+                        ${escapeHtml(message)}
+                    </p>
                 </div>
             </section>
         `;
