@@ -64,6 +64,7 @@ window.SERGIO_DASHBOARD_CONFIG = {
             description:
                 "Weekly project deliverables, supervisor meetings and final submission.",
             image: "assets/logos/ME.jpeg",
+
             items: [
                 {
                     id: "school-week-1",
@@ -120,6 +121,7 @@ window.SERGIO_DASHBOARD_CONFIG = {
             description:
                 "Electrical and Information Engineering Student Council activities.",
             image: "assets/logos/eiesc.jpg",
+
             items: [
                 {
                     id: "eiesc-academic-awards",
@@ -142,78 +144,80 @@ window.SERGIO_DASHBOARD_CONFIG = {
             ]
         },
 
-       {
-    id: "ebesc",
-    title: "EBESC",
-    subtitle: "EBE Faculty Student Council",
-    description:
-        "Faculty council responsibilities, the 2026 Energy Indaba and the teams involved in planning it.",
-    image: "assets/logos/EBESCPICTURE.jpeg",
+        {
+            id: "ebesc",
+            title: "EBESC",
+            subtitle: "EBE Faculty Student Council",
+            description:
+                "Faculty council responsibilities, the 2026 Energy Indaba and the teams involved in planning it.",
+            image: "assets/logos/EBESCPICTURE.jpeg",
 
-    teams: [
-        {
-            title: "Marketing Team",
-            note: "Handles publicity, promotions, visibility and communication for the Energy Indaba."
-        },
-        {
-            title: "Sponsorship Team",
-            note: "Handles sponsor outreach, partnerships, funding support and relationship management."
-        },
-        {
-            title: "Planning Team",
-            members: [
-                "Sergio",
-                "Emmanuel",
-                "Khanyisani",
-                "Mamosadi",
-                "Ithuteng",
-                "Ashwin",
-                "Zimbini",
-                "Moola",
-                "Lerato",
-                "Thandazo"
+            teams: [
+                {
+                    title: "Marketing Team",
+                    note:
+                        "Handles publicity, promotions, visibility and communication for the Energy Indaba."
+                },
+                {
+                    title: "Sponsorship Team",
+                    note:
+                        "Handles sponsor outreach, partnerships, funding support and relationship management."
+                },
+                {
+                    title: "Planning Team",
+                    members: [
+                        "Sergio",
+                        "Emmanuel",
+                        "Khanyisani",
+                        "Mamosadi",
+                        "Ithuteng",
+                        "Ashwin",
+                        "Zimbini",
+                        "Moola",
+                        "Lerato",
+                        "Thandazo"
+                    ]
+                }
+            ],
+
+            items: [
+                {
+                    id: "indaba-invitations",
+                    title: "Minister Invitations",
+                    description:
+                        "Formal invitations to regional ministers and government representatives.",
+                    status: "completed",
+                    dateLabel: "Invitation stage",
+                    folder: "docs/ebesc/indaba/invitations"
+                },
+                {
+                    id: "indaba-shortlist",
+                    title: "Minister Shortlist",
+                    description:
+                        "Shortlisting and prioritisation of invited ministers and speakers.",
+                    status: "in-progress",
+                    dateLabel: "Shortlisting stage",
+                    folder: "docs/ebesc/indaba/shortlist"
+                },
+                {
+                    id: "indaba-booking",
+                    title: "Great Hall Booking",
+                    description:
+                        "Venue booking form, meeting minutes and operational requirements.",
+                    status: "in-progress",
+                    dateLabel: "Booking stage",
+                    folder: "docs/ebesc/indaba/booking"
+                },
+                {
+                    id: "indaba-tour",
+                    title: "School Invitation Tour",
+                    description:
+                        "Planning and documentation for the school invitation campaign.",
+                    status: "upcoming",
+                    dateLabel: "Outreach stage",
+                    folder: "docs/ebesc/indaba/tour"
+                }
             ]
         }
-    ],
-
-    items: [
-        {
-            id: "indaba-invitations",
-            title: "Minister Invitations",
-            description:
-                "Formal invitations to regional ministers and government representatives.",
-            status: "completed",
-            dateLabel: "Invitation stage",
-            folder: "docs/ebesc/indaba/invitations"
-        },
-        {
-            id: "indaba-shortlist",
-            title: "Minister Shortlist",
-            description:
-                "Shortlisting and prioritisation of invited ministers and speakers.",
-            status: "in-progress",
-            dateLabel: "Shortlisting stage",
-            folder: "docs/ebesc/indaba/shortlist"
-        },
-        {
-            id: "indaba-booking",
-            title: "Great Hall Booking",
-            description:
-                "Venue booking form, meeting minutes and operational requirements.",
-            status: "in-progress",
-            dateLabel: "Booking stage",
-            folder: "docs/ebesc/indaba/booking"
-        },
-        {
-            id: "indaba-tour",
-            title: "School Invitation Tour",
-            description:
-                "Planning and documentation for the school invitation campaign.",
-            status: "upcoming",
-            dateLabel: "Outreach stage",
-            folder: "docs/ebesc/indaba/tour"
-        }
-    ]
-}
     ]
 };
