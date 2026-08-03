@@ -114,10 +114,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    /* =========================================================
-       CALENDAR
-    ========================================================= */
-
     function initialiseCalendarControls() {
         elements.previousMonthButton?.addEventListener(
             "click",
@@ -186,7 +182,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const firstDayOfMonth = new Date(year, month, 1);
         const finalDayOfMonth = new Date(year, month + 1, 0);
-
         const leadingEmptyDays = firstDayOfMonth.getDay();
         const numberOfDays = finalDayOfMonth.getDate();
 
@@ -196,10 +191,8 @@ document.addEventListener("DOMContentLoaded", () => {
             index += 1
         ) {
             const emptyCell = document.createElement("span");
-
             emptyCell.className = "calendar-day is-empty";
             emptyCell.setAttribute("aria-hidden", "true");
-
             elements.calendarDays.appendChild(emptyCell);
         }
 
@@ -235,7 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 dayElement.addEventListener("click", () => {
                     state.selectedCalendarDate = dateKey;
-
                     renderCalendar();
                     displayCalendarEvents(dateKey);
                 });
@@ -269,7 +261,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (events.length === 0) {
             elements.calendarEventDetails.textContent =
                 "No dashboard events are scheduled for this date.";
-
             return;
         }
 
@@ -277,9 +268,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const eventMarkup = events
             .map((event) => {
-                const branchName = getBranchTitle(
-                    event.branch
-                );
+                const branchName = getBranchTitle(event.branch);
 
                 return `
                     <article class="calendar-event-entry">
@@ -326,10 +315,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return branch?.title || "";
     }
 
-    /* =========================================================
-       TIMELINE
-    ========================================================= */
-
     function renderTimeline() {
         if (!elements.timelineContainer) {
             return;
@@ -345,16 +330,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     </p>
                 </div>
             `;
-
             return;
         }
 
         config.branches.forEach((branch) => {
-            const branchElement =
-                createTimelineBranch(branch);
-
             elements.timelineContainer.appendChild(
-                branchElement
+                createTimelineBranch(branch)
             );
         });
     }
@@ -594,7 +575,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     toggle,
                     content
                 );
-
                 return;
             }
 
@@ -635,10 +615,6 @@ document.addEventListener("DOMContentLoaded", () => {
         content.hidden = true;
     }
 
-    /* =========================================================
-       GITHUB DOCUMENTS
-    ========================================================= */
-
     async function loadFolderDocuments(
         folderPath,
         container
@@ -655,7 +631,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     </p>
                 </div>
             `;
-
             return;
         }
 
@@ -820,12 +795,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     </p>
                 </div>
             `;
-
             return;
         }
 
         const list = document.createElement("div");
-
         list.className = "document-list";
 
         files.forEach((file) => {
@@ -895,8 +868,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <a
                     class="document-action"
                     href="${escapeAttribute(
-                        file.download_url ||
-                        file.html_url
+                        getPagesFileUrl(file.path)
                     )}"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -920,10 +892,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return item;
     }
 
-    /* =========================================================
-       DOCUMENT PREVIEW
-    ========================================================= */
-
     function openDocumentPreview(file) {
         if (
             !elements.documentModal ||
@@ -934,9 +902,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const extension = getFileExtension(file.name);
-        const rawUrl = file.download_url;
         const githubUrl = file.html_url;
+        const rawUrl = file.download_url;
         const displayName = formatFileName(file.name);
+        const pagesFileUrl = getPagesFileUrl(file.path);
 
         elements.documentModalTitle.textContent =
             displayName;
@@ -944,14 +913,10 @@ document.addEventListener("DOMContentLoaded", () => {
         elements.documentPreview.innerHTML = "";
         elements.documentModalActions.innerHTML = "";
 
-        if (!rawUrl) {
-            showUnsupportedPreview(
-                "A public file URL is not available for this document."
-            );
-        } else if (isImageExtension(extension)) {
+        if (isImageExtension(extension)) {
             const image = document.createElement("img");
 
-            image.src = rawUrl;
+            image.src = pagesFileUrl;
             image.alt = `Preview of ${displayName}`;
             image.loading = "eager";
 
@@ -963,10 +928,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
             elements.documentPreview.appendChild(image);
         } else if (extension === "pdf") {
-            createPdfPreview(rawUrl, displayName);
+            createPdfPreview(
+                pagesFileUrl,
+                displayName
+            );
         } else if (isOfficeExtension(extension)) {
             createOfficePreview(
-                rawUrl,
+                pagesFileUrl,
                 displayName
             );
         } else {
@@ -987,36 +955,82 @@ document.addEventListener("DOMContentLoaded", () => {
         addDocumentModalAction(
             extension === "pdf"
                 ? "Open PDF in new tab"
-                : "Open raw file",
+                : "Open document in new tab",
+            pagesFileUrl
+        );
+
+        addDocumentModalAction(
+            "Download original",
             rawUrl
         );
 
         showModal(elements.documentModal);
     }
 
-    function createPdfPreview(rawUrl, displayName) {
-        const iframe = document.createElement("iframe");
+    function getPagesFileUrl(filePath) {
+        const cleanPath = String(filePath || "")
+            .split("/")
+            .map((part) => encodeURIComponent(part))
+            .join("/");
 
-        iframe.src =
-            "https://docs.google.com/gview?embedded=1&url=" +
-            encodeURIComponent(rawUrl);
+        const currentPath = window.location.pathname;
+        const repositoryRoot = currentPath.endsWith("/")
+            ? currentPath
+            : currentPath.substring(
+                0,
+                currentPath.lastIndexOf("/") + 1
+            );
 
-        iframe.title = `Preview of ${displayName}`;
-        iframe.loading = "eager";
-        iframe.allowFullscreen = true;
+        return new URL(
+            cleanPath,
+            `${window.location.origin}${repositoryRoot}`
+        ).href;
+    }
 
-        elements.documentPreview.appendChild(iframe);
+    function createPdfPreview(
+        pagesFileUrl,
+        displayName
+    ) {
+        const objectElement =
+            document.createElement("object");
+
+        objectElement.data = pagesFileUrl;
+        objectElement.type = "application/pdf";
+        objectElement.setAttribute(
+            "aria-label",
+            `Preview of ${displayName}`
+        );
+
+        objectElement.style.width = "100%";
+        objectElement.style.height = "70vh";
+        objectElement.style.minHeight = "500px";
+
+        objectElement.innerHTML = `
+            <div class="document-preview-message">
+                <p>
+                    Your browser could not display this PDF inline.
+                </p>
+
+                <p>
+                    Use “Open PDF in new tab” below.
+                </p>
+            </div>
+        `;
+
+        elements.documentPreview.appendChild(
+            objectElement
+        );
     }
 
     function createOfficePreview(
-        rawUrl,
+        pagesFileUrl,
         displayName
     ) {
         const iframe = document.createElement("iframe");
 
         iframe.src =
             "https://view.officeapps.live.com/op/embed.aspx?src=" +
-            encodeURIComponent(rawUrl);
+            encodeURIComponent(pagesFileUrl);
 
         iframe.title = `Preview of ${displayName}`;
         iframe.loading = "eager";
@@ -1106,10 +1120,6 @@ document.addEventListener("DOMContentLoaded", () => {
         elements.documentModalActions.appendChild(link);
     }
 
-    /* =========================================================
-       ADMIN PIN GATE
-    ========================================================= */
-
     function initialiseAdminGate() {
         const sessionKey =
             config.admin?.sessionKey ||
@@ -1171,7 +1181,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!/^\d{4}$/.test(submittedPin)) {
                     elements.adminPinMessage.textContent =
                         "Enter a valid four-digit PIN.";
-
                     return;
                 }
 
@@ -1180,7 +1189,6 @@ document.addEventListener("DOMContentLoaded", () => {
                         "The PIN is incorrect.";
 
                     elements.adminPinInput.select();
-
                     return;
                 }
 
@@ -1220,10 +1228,6 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     }
-
-    /* =========================================================
-       MODALS
-    ========================================================= */
 
     function initialiseModalControls() {
         document
@@ -1303,10 +1307,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.body.classList.remove("modal-open");
     }
 
-    /* =========================================================
-       STATUS HELPERS
-    ========================================================= */
-
     function getStatusClass(status) {
         const classes = {
             upcoming: "status-upcoming",
@@ -1326,10 +1326,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         return labels[status] || "Upcoming";
     }
-
-    /* =========================================================
-       FILE HELPERS
-    ========================================================= */
 
     function getFileExtension(fileName) {
         const parts = String(fileName).split(".");
@@ -1449,10 +1445,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${roundedValue} ${units[unitIndex]}`;
     }
 
-    /* =========================================================
-       DATE HELPERS
-    ========================================================= */
-
     function formatDateKey(date) {
         const year = date.getFullYear();
 
@@ -1503,10 +1495,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 today.getDate()
         );
     }
-
-    /* =========================================================
-       SECURITY AND ERROR HELPERS
-    ========================================================= */
 
     function escapeHtml(value) {
         return String(value ?? "")
