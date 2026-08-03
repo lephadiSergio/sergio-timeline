@@ -65,13 +65,13 @@ body {
     background:
         radial-gradient(
             circle at top right,
-            rgba(212, 175, 55, 0.1),
+            rgba(255, 159, 67, 0.12),
             transparent 30%
         ),
         linear-gradient(
             180deg,
             var(--background) 0%,
-            #0d0d0d 100%
+            #0d0503 100%
         );
     line-height: 1.6;
 }
@@ -132,7 +132,7 @@ code {
     top: 0;
     z-index: 100;
     min-height: var(--header-height);
-    background: rgba(18, 18, 18, 0.88);
+    background: rgba(20, 10, 8, 0.92);
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(18px);
 }
@@ -238,11 +238,11 @@ code {
             var(--gold),
             var(--gold-bright)
         );
-    box-shadow: 0 8px 24px rgba(212, 175, 55, 0.2);
+    box-shadow: 0 8px 24px rgba(255, 159, 67, 0.22);
 }
 
 .button-primary:hover {
-    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.32);
+    box-shadow: 0 12px 30px rgba(255, 90, 61, 0.3);
 }
 
 .button-secondary {
@@ -338,7 +338,7 @@ main {
         linear-gradient(
             145deg,
             rgba(255, 255, 255, 0.07),
-            rgba(255, 255, 255, 0.025)
+            rgba(255, 95, 61, 0.035)
         );
     border: 1px solid var(--border);
     border-radius: var(--radius-large);
@@ -353,7 +353,8 @@ main {
     background: linear-gradient(
         180deg,
         var(--gold-bright),
-        var(--gold)
+        #ff9f43,
+        #ff5a3d
     );
 }
 
@@ -408,7 +409,7 @@ main {
         linear-gradient(
             145deg,
             rgba(255, 255, 255, 0.055),
-            rgba(255, 255, 255, 0.025)
+            rgba(255, 95, 61, 0.03)
         );
     border: 1px solid var(--border);
     border-radius: var(--radius-large);
@@ -488,7 +489,7 @@ button.calendar-day {
 
 .calendar-day:hover {
     border-color: var(--border-gold);
-    background: rgba(212, 175, 55, 0.07);
+    background: rgba(255, 159, 67, 0.08);
 }
 
 .calendar-day.is-empty {
@@ -506,9 +507,9 @@ button.calendar-day {
         linear-gradient(
             135deg,
             var(--gold),
-            var(--gold-bright)
+            #ff9f43
         );
-    box-shadow: 0 10px 24px rgba(212, 175, 55, 0.18);
+    box-shadow: 0 10px 24px rgba(255, 159, 67, 0.2);
 }
 
 .calendar-day.has-event::after {
@@ -523,7 +524,7 @@ button.calendar-day {
 }
 
 .calendar-day.is-selected {
-    outline: 3px solid rgba(241, 196, 15, 0.25);
+    outline: 3px solid rgba(255, 90, 61, 0.28);
     outline-offset: 2px;
 }
 
@@ -533,7 +534,7 @@ button.calendar-day {
     padding: 16px 18px;
     color: var(--muted-light);
     background: rgba(0, 0, 0, 0.22);
-    border-left: 3px solid var(--gold);
+    border-left: 3px solid #ff9f43;
     border-radius: var(--radius-small);
 }
 
@@ -555,7 +556,9 @@ button.calendar-day {
             180deg,
             var(--gold-bright),
             var(--gold),
-            rgba(212, 175, 55, 0.15)
+            #ff9f43,
+            #ff5a3d,
+            rgba(255, 90, 61, 0.16)
         );
 }
 
@@ -619,7 +622,7 @@ button.calendar-day {
         linear-gradient(
             145deg,
             rgba(255, 255, 255, 0.055),
-            rgba(255, 255, 255, 0.025)
+            rgba(255, 95, 61, 0.025)
         );
     border: 1px solid var(--border);
     border-radius: var(--radius-medium);
@@ -643,7 +646,7 @@ button.calendar-day {
 }
 
 .timeline-card-toggle:hover {
-    background: rgba(212, 175, 55, 0.045);
+    background: rgba(255, 159, 67, 0.05);
 }
 
 .timeline-card-copy {
@@ -712,8 +715,8 @@ button.calendar-day {
 }
 
 .status-upcoming {
-    color: #dfe3e4;
-    background: rgba(127, 140, 141, 0.18);
+    color: #fff3a8;
+    background: rgba(255, 212, 59, 0.14);
 }
 
 .status-upcoming::before {
@@ -721,8 +724,8 @@ button.calendar-day {
 }
 
 .status-in-progress {
-    color: #ffd99a;
-    background: rgba(243, 156, 18, 0.18);
+    color: #ffd1a3;
+    background: rgba(255, 159, 67, 0.16);
 }
 
 .status-in-progress::before {
@@ -730,8 +733,8 @@ button.calendar-day {
 }
 
 .status-completed {
-    color: #aef1ca;
-    background: rgba(46, 204, 113, 0.16);
+    color: #ffd0c8;
+    background: rgba(255, 90, 61, 0.16);
 }
 
 .status-completed::before {
@@ -842,7 +845,7 @@ button.calendar-day {
 
 .error-state {
     color: #ffb5ae;
-    border-color: rgba(231, 76, 60, 0.35);
+    border-color: rgba(255, 77, 79, 0.38);
 }
 
 .admin-section {
@@ -853,7 +856,7 @@ button.calendar-day {
     margin-bottom: 24px;
     padding: 18px 20px;
     color: #ffe7ac;
-    background: rgba(212, 175, 55, 0.1);
+    background: rgba(255, 159, 67, 0.1);
     border: 1px solid var(--border-gold);
     border-radius: var(--radius-medium);
 }
@@ -871,7 +874,7 @@ button.calendar-day {
         linear-gradient(
             145deg,
             rgba(255, 255, 255, 0.055),
-            rgba(255, 255, 255, 0.025)
+            rgba(255, 95, 61, 0.025)
         );
     border: 1px solid var(--border);
     border-radius: var(--radius-medium);
@@ -896,7 +899,7 @@ button.calendar-day {
 
 .site-footer {
     padding: 38px 0;
-    background: #0a0a0a;
+    background: #120704;
     border-top: 1px solid var(--border);
 }
 
@@ -958,8 +961,8 @@ button.calendar-day {
     background:
         linear-gradient(
             145deg,
-            #252525,
-            #171717
+            var(--surface-raised),
+            var(--background-soft)
         );
     border: 1px solid var(--border-gold);
     border-radius: var(--radius-large);
@@ -1018,7 +1021,7 @@ button.calendar-day {
 
 .modal input:focus {
     border-color: var(--gold);
-    box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.12);
+    box-shadow: 0 0 0 4px rgba(255, 159, 67, 0.14);
 }
 
 .form-message {
@@ -1081,8 +1084,153 @@ button.calendar-day {
 .document-action:focus-visible,
 .calendar-day:focus-visible,
 a:focus-visible {
-    outline: 3px solid rgba(241, 196, 15, 0.55);
+    outline: 3px solid rgba(255, 159, 67, 0.58);
     outline-offset: 3px;
+}
+
+.timeline-teams {
+    margin: 18px 0 24px;
+    padding: 20px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.05),
+            rgba(255, 95, 61, 0.05)
+        );
+    border: 1px solid var(--border);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-small);
+}
+
+.timeline-teams-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.timeline-teams-header h4 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.timeline-teams-header p {
+    margin: 4px 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.team-card {
+    padding: 16px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.055),
+            rgba(255, 255, 255, 0.02)
+        );
+    border: 1px solid var(--border-gold);
+    border-radius: 16px;
+    box-shadow: var(--shadow-small);
+}
+
+.team-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.team-card h4 {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.team-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 9px;
+    color: var(--text-dark);
+    font-size: 0.72rem;
+    font-weight: 800;
+    background:
+        linear-gradient(
+            135deg,
+            var(--gold),
+            var(--gold-bright)
+        );
+    border-radius: var(--radius-pill);
+}
+
+.team-note {
+    margin: 0 0 12px;
+    color: var(--muted-light);
+    font-size: 0.88rem;
+}
+
+.team-members {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.team-member {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    color: var(--text);
+    font-size: 0.82rem;
+    font-weight: 700;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 212, 59, 0.14),
+            rgba(255, 95, 61, 0.16)
+        );
+    border: 1px solid rgba(255, 159, 67, 0.25);
+    border-radius: var(--radius-pill);
+}
+
+.calendar-event-entry {
+    display: grid;
+    gap: 2px;
+    margin-top: 10px;
+}
+
+.calendar-event-entry span {
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.document-preview:fullscreen,
+.document-preview:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    background: #000;
+    border: 0;
+    border-radius: 0;
+}
+
+.document-preview:fullscreen iframe,
+.document-preview:fullscreen img,
+.document-preview:-webkit-full-screen iframe,
+.document-preview:-webkit-full-screen img {
+    width: 100%;
+    height: 100%;
+    min-height: 100vh;
+    max-height: 100vh;
+    object-fit: contain;
 }
 
 @keyframes spin {
@@ -1107,6 +1255,10 @@ a:focus-visible {
         align-items: flex-start;
         flex-direction: column;
         gap: 16px;
+    }
+
+    .team-grid {
+        grid-template-columns: 1fr;
     }
 
     .notes-grid {
