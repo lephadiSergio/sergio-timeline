@@ -5,7 +5,7 @@
  *
  * Important:
  * The PIN below is visible in the public repository.
- * It is only a soft interface lock and must not protect sensitive information.
+ * It is only a soft interface lock and must not protect sensitive information. h
  */
 
 window.SERGIO_DASHBOARD_CONFIG = {
