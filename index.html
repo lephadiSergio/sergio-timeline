@@ -2,17 +2,391 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Sergio Lephadi's engineering project and student council timeline and deliverables dashboard."
+    >
 
     <title>Sergio's Timeline & Deliverables Dashboard</title>
 
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <main>
-        <h1>Sergio's Timeline & Deliverables Dashboard</h1>
-        <p>Website setup in progress.</p>
+    <a class="skip-link" href="#main-content">
+        Skip to main content
+    </a>
+
+    <header class="site-header">
+        <div class="header-inner">
+            <a
+                class="brand"
+                href="#top"
+                aria-label="Go to the top of the dashboard"
+            >
+                <img
+                    class="brand-avatar"
+                    src="assets/logos/ME.jpeg"
+                    alt="Sergio Lephadi"
+                >
+
+                <span class="brand-copy">
+                    <strong>Sergio's Dashboard</strong>
+                    <span>Timeline & Deliverables</span>
+                </span>
+            </a>
+
+            <nav class="header-actions" aria-label="Dashboard actions">
+                <button
+                    class="button button-secondary"
+                    id="open-calendar-button"
+                    type="button"
+                >
+                    Calendar
+                </button>
+
+                <button
+                    class="button button-primary"
+                    id="open-admin-button"
+                    type="button"
+                >
+                    Admin Access
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main id="main-content">
+        <section class="hero-section" id="top">
+            <div class="hero-content">
+                <p class="eyebrow">Central project hub</p>
+
+                <h1>
+                    Sergio's Timeline
+                    <span>& Deliverables Dashboard</span>
+                </h1>
+
+                <p class="hero-description">
+                    A central dashboard for tracking engineering-project
+                    deliverables, student-council events, supporting documents
+                    and important dates.
+                </p>
+
+                <div class="hero-actions">
+                    <a class="button button-primary" href="#timeline">
+                        View timeline
+                    </a>
+
+                    <button
+                        class="button button-secondary"
+                        id="hero-calendar-button"
+                        type="button"
+                    >
+                        Open calendar
+                    </button>
+                </div>
+            </div>
+
+            <aside class="hero-summary" aria-label="Dashboard summary">
+                <article class="summary-card">
+                    <span class="summary-label">School project</span>
+                    <strong>ELEN4000A/4011A</strong>
+                    <span>Nano-grid design project</span>
+                </article>
+
+                <article class="summary-card">
+                    <span class="summary-label">School council</span>
+                    <strong>EiESC</strong>
+                    <span>Academic Awards and Gradball</span>
+                </article>
+
+                <article class="summary-card">
+                    <span class="summary-label">Faculty council</span>
+                    <strong>EBESC</strong>
+                    <span>2026 Energy Indaba</span>
+                </article>
+            </aside>
+        </section>
+
+        <section class="calendar-section" id="calendar-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Schedule overview</p>
+                    <h2>Interactive calendar</h2>
+                </div>
+
+                <p>
+                    Navigate between months and select highlighted dates to
+                    review scheduled activities.
+                </p>
+            </div>
+
+            <div class="calendar-panel">
+                <div class="calendar-toolbar">
+                    <button
+                        class="icon-button"
+                        id="previous-month-button"
+                        type="button"
+                        aria-label="View previous month"
+                    >
+                        <span aria-hidden="true">←</span>
+                    </button>
+
+                    <h3 id="calendar-month-label" aria-live="polite">
+                        Calendar
+                    </h3>
+
+                    <button
+                        class="icon-button"
+                        id="next-month-button"
+                        type="button"
+                        aria-label="View next month"
+                    >
+                        <span aria-hidden="true">→</span>
+                    </button>
+                </div>
+
+                <div
+                    class="calendar-grid calendar-weekdays"
+                    aria-hidden="true"
+                >
+                    <span>Sun</span>
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                </div>
+
+                <div
+                    class="calendar-grid calendar-days"
+                    id="calendar-days"
+                    role="grid"
+                    aria-label="Dashboard calendar"
+                ></div>
+
+                <div
+                    class="calendar-event-details"
+                    id="calendar-event-details"
+                    aria-live="polite"
+                >
+                    Select a highlighted date to view its event.
+                </div>
+            </div>
+        </section>
+
+        <section class="timeline-section" id="timeline">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Projects and responsibilities</p>
+                    <h2>Timeline branches</h2>
+                </div>
+
+                <p>
+                    Expand a card to load the documents stored in its matching
+                    GitHub repository folder.
+                </p>
+            </div>
+
+            <div
+                class="timeline"
+                id="timeline-container"
+                aria-live="polite"
+            >
+                <div class="loading-state">
+                    <span class="loading-spinner" aria-hidden="true"></span>
+                    <p>Loading dashboard timeline…</p>
+                </div>
+            </div>
+        </section>
+
+        <section
+            class="admin-section"
+            id="admin-section"
+            hidden
+        >
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">Soft access gate</p>
+                    <h2>Personal dashboard notes</h2>
+                </div>
+
+                <button
+                    class="button button-secondary"
+                    id="lock-admin-button"
+                    type="button"
+                >
+                    Lock section
+                </button>
+            </div>
+
+            <div class="security-notice">
+                <strong>Important:</strong>
+                This section uses a client-side PIN only to prevent accidental
+                access. It is not secure authentication, and confidential
+                information should not be stored here.
+            </div>
+
+            <div class="notes-grid">
+                <article class="note-card">
+                    <span class="note-number">01</span>
+                    <h3>Current focus</h3>
+                    <p>
+                        Review active deliverables and update project folders
+                        after each meeting.
+                    </p>
+                </article>
+
+                <article class="note-card">
+                    <span class="note-number">02</span>
+                    <h3>Document routine</h3>
+                    <p>
+                        Upload action plans, meeting minutes and supporting
+                        evidence using clear and consistent filenames.
+                    </p>
+                </article>
+
+                <article class="note-card">
+                    <span class="note-number">03</span>
+                    <h3>Dashboard maintenance</h3>
+                    <p>
+                        Update dates, descriptions and statuses in
+                        <code>config.js</code> whenever priorities change.
+                    </p>
+                </article>
+            </div>
+        </section>
     </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div>
+                <strong>Sergio Lephadi</strong>
+                <p>
+                    Electrical Engineering · Project and leadership dashboard
+                </p>
+            </div>
+
+            <a
+                href="https://github.com/lephadiSergio/sergio-timeline"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                View repository
+            </a>
+        </div>
+    </footer>
+
+    <dialog
+        class="modal"
+        id="admin-modal"
+        aria-labelledby="admin-modal-title"
+    >
+        <div class="modal-card modal-card-small">
+            <button
+                class="modal-close"
+                type="button"
+                data-close-modal="admin-modal"
+                aria-label="Close admin access window"
+            >
+                ×
+            </button>
+
+            <p class="eyebrow">Admin access</p>
+
+            <h2 id="admin-modal-title">
+                Enter your four-digit PIN
+            </h2>
+
+            <p class="modal-description">
+                This is a soft client-side gate and does not provide secure
+                authentication.
+            </p>
+
+            <form id="admin-pin-form" novalidate>
+                <label for="admin-pin">
+                    Four-digit PIN
+                </label>
+
+                <input
+                    id="admin-pin"
+                    name="adminPin"
+                    type="password"
+                    inputmode="numeric"
+                    autocomplete="off"
+                    maxlength="4"
+                    pattern="[0-9]{4}"
+                    placeholder="••••"
+                    required
+                >
+
+                <p
+                    class="form-message"
+                    id="admin-pin-message"
+                    aria-live="polite"
+                ></p>
+
+                <button
+                    class="button button-primary button-full"
+                    type="submit"
+                >
+                    Unlock notes
+                </button>
+            </form>
+        </div>
+    </dialog>
+
+    <dialog
+        class="modal"
+        id="document-modal"
+        aria-labelledby="document-modal-title"
+    >
+        <div class="modal-card modal-card-large">
+            <div class="modal-header">
+                <div>
+                    <p class="eyebrow">Document preview</p>
+                    <h2 id="document-modal-title">
+                        Preview
+                    </h2>
+                </div>
+
+                <button
+                    class="modal-close"
+                    type="button"
+                    data-close-modal="document-modal"
+                    aria-label="Close document preview"
+                >
+                    ×
+                </button>
+            </div>
+
+            <div
+                class="document-preview"
+                id="document-preview"
+            >
+                <p>Select a document to preview it.</p>
+            </div>
+
+            <div
+                class="document-modal-actions"
+                id="document-modal-actions"
+            ></div>
+        </div>
+    </dialog>
+
+    <noscript>
+        <div class="noscript-notice">
+            JavaScript is required to load the calendar, timeline and repository
+            documents.
+        </div>
+    </noscript>
 
     <script src="config.js"></script>
     <script src="app.js"></script>
